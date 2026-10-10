@@ -1,0 +1,32 @@
+{
+  "name": "Helena Mannochio-Russo",
+  "tagline": "Postdoctoral Researcher · Dorrestein Lab, UC San Diego",
+  "my_name_patterns": ["mannochio", "^russo, h"],
+  "selected_on_home": 5,
+  "nav": [
+    ["index.html", "Home"],
+    ["experience.html", "Experience"],
+    ["publications.html", "Publications"],
+    ["awards.html", "Awards"],
+    ["presentations.html", "Presentations"],
+    ["events.html", "Events"],
+    ["contact.html", "Contact"]
+  ],
+  "pages": {
+    "index.html": "Home",
+    "experience.html": "Education & Experience",
+    "publications.html": "Publications",
+    "awards.html": "Awards",
+    "presentations.html": "Presentations",
+    "events.html": "Organization of Events",
+    "contact.html": "Contact"
+  },
+  "links": [
+    ["Google Scholar", "https://scholar.google.com/citations?user=-HEC0H8AAAAJ&hl=en", "scholar"],
+    ["ORCID", "https://orcid.org/0000-0002-4961-2353", "orcid"],
+    ["ResearchGate", "https://www.researchgate.net/profile/Helena-Russo", "researchgate"],
+    ["LinkedIn", "https://www.linkedin.com/in/helena-mannochio-russo-094025127/", "linkedin"],
+    ["Lattes CV", "http://lattes.cnpq.br/9014119833113231", "lattes"],
+    ["Linktree", "https://linktr.ee/helenamrusso", "linktree"]
+  ]
+}

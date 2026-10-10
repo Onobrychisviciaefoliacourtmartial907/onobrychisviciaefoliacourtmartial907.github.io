@@ -1,0 +1,43 @@
+name: Build and deploy website
+
+on:
+  # Manual trigger: GitHub → Actions → "Build and deploy website" → Run workflow
+  workflow_dispatch:
+  # Automatic rebuild whenever something is pushed/uploaded to main.
+  # Delete these three lines if you only want to update the site manually.
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build site from pages/ and publications/*.ris
+        run: python scripts/build.py
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

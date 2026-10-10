@@ -1,0 +1,13 @@
+# Highlighted publications — shown at the top of the Publications page
+# and as "Selected publications" on the home page.
+# One DOI per line (or the exact paper title), in the order you want them shown.
+# Lines starting with # are ignored.
+
+10.1016/j.cell.2025.05.015
+10.1016/j.cell.2024.02.019
+10.1038/s41592-026-03186-8
+10.64898/2026.01.24.701521
+10.64898/2026.03.27.714844
+10.1101/2024.05.13.593988
+10.1038/s41596-024-01136-2
+10.1038/s41579-021-00621-9
