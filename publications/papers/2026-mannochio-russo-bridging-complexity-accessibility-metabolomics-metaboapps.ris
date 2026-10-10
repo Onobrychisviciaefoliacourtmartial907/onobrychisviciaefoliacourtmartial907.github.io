@@ -1,8 +1,4 @@
 TY  - JOUR
-DO  - 10.1038/s41592-026-03186-8
-UR  - http://dx.doi.org/10.1038/s41592-026-03186-8
-TI  - Bridging complexity and accessibility in metabolomics with MetaboApps
-T2  - Nature Methods
 AU  - Mannochio-Russo, Helena †
 AU  - Gonçalves Nunes, Wilhan D. †
 AU  - Zhao, Haoqi Nina
@@ -26,12 +22,15 @@ AU  - Petras, Daniel
 AU  - Wang, Mingxun
 AU  - Dorrestein, Pieter C.
 PY  - 2026
-DA  - 2026/07/24
-PB  - Springer Science and Business Media LLC
-SP  - 1475-1477
-IS  - 8
+DA  - 2026/08/01
+TI  - Bridging complexity and accessibility in metabolomics with MetaboApps
+JO  - Nature Methods
+SP  - 1475
+EP  - 1477
 VL  - 23
-SN  - 1548-7091
+IS  - 8
 SN  - 1548-7105
-N1  - status: In press
-ER  -
+UR  - https://doi.org/10.1038/s41592-026-03186-8
+DO  - 10.1038/s41592-026-03186-8
+ID  - Mannochio-Russo2026
+ER  - 
