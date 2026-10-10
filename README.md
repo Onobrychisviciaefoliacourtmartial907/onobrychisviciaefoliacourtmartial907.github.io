@@ -1,4 +1,4 @@
-# Helena Mannochio-Russo — personal website
+# Helena Mannochio Russo — personal website
 
 A static website built by a small Python script (standard library only) and
 published with GitHub Pages. The publications page is generated from `.ris`
