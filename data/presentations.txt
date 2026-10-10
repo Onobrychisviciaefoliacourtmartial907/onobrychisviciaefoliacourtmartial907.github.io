@@ -1,0 +1,160 @@
+# Conference presentations and invited talks.
+# Used for the Presentations page AND the CV (Invited talks / Oral / Poster sections).
+#
+# One block per presentation, blocks separated by an empty line. Fields:
+#   year:      required
+#   type:      oral, poster or invited (for "oral and poster" write: oral, poster)
+#   title:     required
+#   event:     conference or venue
+#   location:  city, state/country
+#   mode:      write "online" for virtual presentations (optional)
+# The same title at the same event/year is shown once on the website.
+# Order inside a year is kept as written here (newest year first is not required).
+
+year: 2026
+type: oral
+title: plantMASST: A community-driven mass spectrometry resource for the chemotaxonomic digitization of plants
+event: 74th ASMS Conference on Mass Spectrometry and Allied Topics
+location: San Diego, CA, United States
+
+year: 2026
+type: poster
+title: Pan-metabolomics repository mapping of the carnitine landscape
+event: 74th ASMS Conference on Mass Spectrometry and Allied Topics
+location: San Diego, CA, United States
+
+year: 2025
+type: oral
+title: The microbiome diversifies long- to short-chain fatty acid-derived N-acyl lipids
+event: PACIFICHEM 2025
+location: Honolulu, HI, United States
+
+year: 2025
+type: oral
+title: The microbiome diversifies N-acyl lipid pools - including short-chain fatty acid-derived compounds
+event: Gordon Research Seminar - Metabolomics and Human Health
+location: Ventura, CA, United States
+
+year: 2025
+type: poster
+title: The microbiome diversifies N-acyl lipid pools - including short-chain fatty acid-derived compounds
+event: Gordon Research Conference - Metabolomics and Human Health
+location: Ventura, CA, United States
+
+year: 2025
+type: invited
+title: Unlocking the unexplored potential of metabolomics data: a journey from natural products to data science and clinical applications
+event: San Diego State University Chemistry Department seminar
+location: San Diego, CA, United States
+
+year: 2025
+type: oral
+title: The microbiome diversifies long- to short-chain fatty acid-derived N-acyl lipids
+event: 2025 Metabolomics Association of North America (MANA) 7th Annual Conference
+location: Banff, Alberta, Canada
+
+year: 2025
+type: invited
+title: The microbiome diversifies long- to short-chain fatty acid-derived N-acyl lipids
+event: UCSD HIV Neurobehavioral Research Program (HNRP) Depression Working Group Meeting
+location: San Diego, CA, United States
+
+year: 2024
+type: poster
+title: Community curation of microbiome metabolites for the mechanistic analysis of metabolomics data
+event: 72nd ASMS Conference on Mass Spectrometry and Allied Topics
+location: Anaheim, CA, United States
+
+year: 2024
+type: poster
+title: Repository scale discovery of microbial compounds include short chain fatty acid-derived metabolites
+event: 20th Annual International Conference of the Metabolomics Society
+location: Osaka, Japan
+
+year: 2023
+type: oral
+title: The underappreciated diversity of bile acids modifications
+event: 71st ASMS Conference on Mass Spectrometry and Allied Topics
+location: Houston, TX, United States
+
+year: 2022
+type: oral, poster
+title: Mass spectrometry-based untargeted metabolomics reveals unusual larvicidal aliphatic nitro esters from Heteropterys umbellata (Malpighiaceae)
+event: 45a Reunião Anual da Sociedade Brasileira de Química
+location: Maceió, AL, Brazil
+
+year: 2022
+type: poster
+title: Chemotaxonomic investigations of Malpighiaceae botanical family using mass spectrometry-based metabolomics
+event: American Chemical Society Fall 2022 National Meeting
+location: Chicago, IL, United States
+
+year: 2021
+type: poster
+title: Screening of Malpighiaceae Plant Extracts Against Aedes aegypti Larvae and Metabolomic Investigation of the Most Active Species
+event: 8th Brazilian Conference on Natural Products
+location: Goiania, GO, Brazil
+mode: online
+
+year: 2021
+type: poster
+title: Untargeted metabolomics sheds light on the secondary metabolism of Malpighiaceae family
+event: 69th International Congress and Annual Meeting of the Society for Medicinal Plant and Natural Product Research (GA)
+location: Bonn, Germany
+mode: online
+
+year: 2021
+type: oral
+title: Use of Statistical Tools and Automation to Accelerate the Natural Products Workflow – A Malpighiaceae Case Study
+event: II Bio.Natural-Bioactive Natural Products Research Meeting
+location: Lisboa, Portugal
+mode: online
+
+year: 2020
+type: poster
+title: Experimental design applied in UPLC-DAD method development of Malpighiaceae species extracts and metabolite identification
+event: American Chemical Society Spring 2020 National Meeting
+location: Philadelphia, PA, United States
+mode: online
+
+year: 2019
+type: poster
+title: Experimental planning for UPLC method development of hydroalcoholic extracts from Malpighiaceae species
+event: XVII Latin American Symposium on Chromatography and Related Techniques
+location: Aracaju, SE, Brazil
+
+year: 2019
+type: poster
+title: Chemical profile of Crotalaria spectabilis extracts and evaluation of nematode control in Heterodera glycines
+event: 42a Reunião Anual da Sociedade Brasileira de Química
+location: Joinville, SC, Brazil
+
+year: 2019
+type: poster
+title: Identificação de metabólitos secundários com atividade anti-glicante em extratos da espécie Talisia esculenta
+event: 12o Simpósio Brasileiro de Farmacognosia
+location: Petrópolis, RJ, Brazil
+
+year: 2018
+type: oral, poster
+title: Search for natural products of economic interest in fruit residues of Platonia insignis: bioactivity evaluation and structural characterization
+event: XXV Encontro de Química da Região Sul (SBQSul)
+location: Londrina, PR, Brazil
+
+year: 2017
+type: oral, poster
+title: Chemical Profile of Tetrapterys multiglandulosa, a plant suspected of causing cattle intoxication in Brazil
+event: 46th World Chemistry Congress, 40a Reunião Anual da Sociedade Brasileira de Química
+location: São Paulo, SP, Brazil
+
+year: 2017
+type: poster
+title: Chemical profile and toxicity study of Tetrapterys multiglandulosa secondary metabolites using Zebrafish toxicity model
+event: 6th Brazilian Conference on Natural Products
+location: Vitória, ES, Brazil
+
+year: 2017
+type: poster
+title: Thermoanalytical characteristics of Tetrapterys multiglandulosa young and old leaves' powder and methanolic extracts by TG-DSC
+event: VIII Simpósio de Análise Térmica
+location: Ponta Grossa, PR, Brazil

@@ -15,6 +15,7 @@ import html
 import json
 import re
 import shutil
+import sys
 import unicodedata
 from pathlib import Path
 
@@ -77,6 +78,8 @@ def split_author(raw):
         if raw[-1] in MARKERS:
             marks = raw[-1] + marks
         raw = raw[:-1]
+    if raw.isupper():  # some publishers send "VALLI, MARILIA"
+        raw = re.sub(r"[^\W\d_]+", lambda m: m.group(0).capitalize(), raw)
     if "," in raw:
         last, given = [p.strip() for p in raw.split(",", 1)]
         display = f"{given} {last}".strip()
@@ -111,6 +114,7 @@ def to_record(rec, kind, source):
     return {
         "title": title, "authors": authors, "venue": venue, "year": int(year_m.group(0)) if year_m else 0,
         "date_key": date_key, "doi": doi, "url": url, "kind": kind, "status": "; ".join(notes),
+        "volume": first(rec, "VL"), "issue": first(rec, "IS"),
         "source": source,
     }
 
@@ -320,6 +324,152 @@ def selected_list(highlighted):
     return f'<ol class="pubs">{items}</ol>'
 
 
+# ---------------------------------------------------------------- presentations
+
+TALK_LABELS = {"oral": "Oral", "poster": "Poster", "invited": "Invited talk"}
+
+
+def load_presentations():
+    """Parse data/presentations.txt: blank-line separated blocks of 'key: value' lines."""
+    path = ROOT / "data" / "presentations.txt"
+    talks = []
+    for block in re.split(r"\n\s*\n", path.read_text(encoding="utf-8")):
+        fields = {}
+        for line in block.splitlines():
+            if line.lstrip().startswith("#") or ":" not in line:
+                continue
+            key, val = line.split(":", 1)
+            fields[key.strip().lower()] = val.strip()
+        if not fields:
+            continue
+        if not fields.get("title") or not re.fullmatch(r"\d{4}", fields.get("year", "")):
+            print(f"  warning: presentation skipped (needs year and title): {fields}")
+            continue
+        types = [t.strip().lower() for t in fields.get("type", "").split(",") if t.strip()]
+        for t in types:
+            if t not in TALK_LABELS:
+                print(f"  warning: unknown presentation type '{t}' in: {fields['title']}")
+        location = fields.get("location", "")
+        if fields.get("mode", "").lower() == "online":
+            location = f"{location} (online)" if location else "Online"
+        talks.append({"year": int(fields["year"]), "types": types, "title": fields["title"],
+                      "event": fields.get("event", ""), "location": location})
+    talks.sort(key=lambda t: t["year"], reverse=True)  # stable: keeps file order within a year
+    return talks
+
+
+def presentations_page(talks):
+    years = sorted({t["year"] for t in talks}, reverse=True)
+    out = ['<section class="page-head">\n  <p class="eyebrow">Talks &amp; posters</p>\n  <h1>Presentations</h1>\n</section>\n']
+    for y in years:
+        merged = {}  # same title within a year -> one entry listing every event
+        for t in (t for t in talks if t["year"] == y):
+            entry = merged.setdefault(t["title"], {"events": [], "types": []})
+            entry["events"].append(", ".join(x for x in (t["event"], t["location"]) if x))
+            entry["types"] += [x for x in t["types"] if x not in entry["types"]]
+        items = "".join(
+            f'<li><h3>{html.escape(title)}</h3>{"".join(f"<p>{html.escape(e)}.</p>" for e in e_["events"])}'
+            f'<p class="tags">{"".join(f"<span class=kind>{TALK_LABELS.get(k, k.title())}</span>" for k in e_["types"])}</p></li>'
+            for title, e_ in merged.items()
+        )
+        out.append(f'<h2 class="group-title" id="y{y}">{y}</h2>\n<div class="card list-card">\n  <ul>{items}</ul>\n</div>\n')
+    return "\n".join(out)
+
+
+# ---------------------------------------------------------------- CV
+
+
+def cv_pub(p):
+    authors = []
+    for a in p["authors"]:
+        name = html.escape(a["name"])
+        authors.append((f"<b>{name}</b>" if a["me"] else name) + (f"<sup>{html.escape(a['marks'])}</sup>" if a["marks"] else ""))
+    journal = [f"<i>{html.escape(p['venue'])}</i>"]
+    if p["volume"]:
+        journal.append(f"Vol. {html.escape(p['volume'])}")
+    if p["issue"]:
+        journal.append(f"No. {html.escape(p['issue'])}")
+    if p["status"]:
+        journal.append(html.escape(p["status"]))
+    journal.append(str(p["year"] or "n.d."))
+    link = f' <a href="https://doi.org/{html.escape(p["doi"])}">doi.org/{html.escape(p["doi"])}</a>' if p["doi"] else ""
+    return (f'<li><span class="t">{safe_title(p["title"])}</span><br>'
+            f'<span class="a">{", ".join(authors)}</span><br>'
+            f'<span class="j">{", ".join(journal)}.</span>{link}</li>')
+
+
+def is_first_or_cofirst(p):
+    return bool(p["authors"]) and (p["authors"][0]["me"] or any(a["me"] and "†" in a["marks"] for a in p["authors"]))
+
+
+def cv_values(pubs, talks):
+    accepted = [p for p in pubs if p["kind"] == "paper" and "press" in p["status"].lower()]
+    published = [p for p in pubs if p["kind"] == "paper" and p not in accepted]
+    preprints = [p for p in pubs if p["kind"] == "preprint"]
+
+    def pub_list(items):
+        return f'<ol class="cv-pubs" reversed>{"".join(cv_pub(p) for p in items)}</ol>'
+
+    def section(title, items):
+        return f"<section><h2>{title}</h2>{pub_list(items)}</section>" if items else ""
+
+    def talk_group(title, kind):
+        items = [t for t in talks if kind in t["types"]]
+        if not items:
+            return ""
+        rows = "".join(
+            f'<div class="item row"><div><h3>{html.escape(t["title"])}</h3>'
+            f'<p>{html.escape(", ".join(x for x in (t["event"], t["location"]) if x))}</p></div>'
+            f'<span class="when">{t["year"]}</span></div>'
+            for t in items
+        )
+        return f'<h3 class="sub">{title}</h3><div class="cv-talks">{rows}</div>'
+
+    n_first = sum(is_first_or_cofirst(p) for p in published)
+    return {
+        "cv_pub_counts": f"{len(published)} published articles, {n_first} as first or co-first author.",
+        "cv_publications": pub_list(published),
+        "cv_accepted": section("Manuscripts Accepted for Publication", accepted),
+        "cv_preprints": section("Preprints", preprints),
+        "cv_invited": talk_group("Invited talks", "invited"),
+        "cv_oral": talk_group("Oral presentations", "oral"),
+        "cv_posters": talk_group("Poster presentations", "poster"),
+        "cv_updated": dt.date.today().strftime("%B %d, %Y"),
+    }
+
+
+def find_chrome():
+    import os
+    candidates = [os.environ.get("CHROME", ""), "google-chrome", "google-chrome-stable", "chromium", "chromium-browser",
+                  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+                  "/Applications/Chromium.app/Contents/MacOS/Chromium"]
+    for c in candidates:
+        if c and (shutil.which(c) or Path(c).exists()):
+            return shutil.which(c) or c
+    return None
+
+
+def make_pdf(html_path, pdf_path):
+    import subprocess
+    chrome = find_chrome()
+    if not chrome:
+        print("  warning: Chrome/Chromium not found, cv.pdf was not created (it will be on GitHub)")
+        return False
+    if pdf_path.exists():
+        pdf_path.unlink()
+    cmd = [chrome, "--headless=new", "--disable-gpu", "--no-pdf-header-footer", f"--print-to-pdf={pdf_path}"]
+    if sys.platform.startswith("linux"):
+        cmd.append("--no-sandbox")  # needed on GitHub's runners
+    try:
+        subprocess.run(cmd + [html_path.resolve().as_uri()], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=120)
+    except subprocess.TimeoutExpired:
+        print("  warning: Chrome timed out while printing the CV")
+    if not pdf_path.exists():
+        print("  warning: Chrome ran but cv.pdf was not created")
+        return False
+    return True
+
+
 def profile_links():
     return "".join(
         f'<a class="profile" href="{html.escape(url)}" target="_blank" rel="noopener">'
@@ -359,9 +509,18 @@ def build(compare_layouts=False):
         out = fill(layout.replace("{{content}}", fill(body)).replace("{{nav}}", nav).replace("{{title}}", html.escape(full_title)))
         (OUT / page).write_text(out, encoding="utf-8")
 
+    talks = load_presentations()
+    generated = {"publications.html": lambda: publications_page(pubs, highlighted), "presentations.html": lambda: presentations_page(talks)}
     for page, title in CONFIG["pages"].items():
-        body = publications_page(pubs, highlighted) if page == "publications.html" else (ROOT / "pages" / page).read_text(encoding="utf-8")
+        body = generated[page]() if page in generated else (ROOT / "pages" / page).read_text(encoding="utf-8")
         write(page, title, body)
+
+    cv_fill = {**values, **cv_values(pubs, talks)}
+    cv_html = re.sub(r"\{\{\s*(\w+)\s*\}\}", lambda m: cv_fill.get(m.group(1), m.group(0)),
+                     (ROOT / "templates" / "cv.html").read_text(encoding="utf-8"))
+    (OUT / "cv.html").write_text(cv_html, encoding="utf-8")
+    if make_pdf(OUT / "cv.html", OUT / "cv.pdf"):
+        print("  wrote CV: cv.html and cv.pdf")
     if compare_layouts:  # side-by-side previews: publications-list.html, -timeline.html, -cards.html
         for name in ("list", "timeline", "cards"):
             write(f"publications-{name}.html", "Publications", publications_page(pubs, highlighted, name), "publications.html")

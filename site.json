@@ -11,7 +11,8 @@
     ["awards.html", "Awards & Funding"],
     ["presentations.html", "Presentations"],
     ["events.html", "Events"],
-    ["contact.html", "Contact"]
+    ["contact.html", "Contact"],
+    ["cv.html", "CV"]
   ],
   "pages": {
     "index.html": "Home",

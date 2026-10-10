@@ -9,8 +9,9 @@ publications/
   papers/        ← peer-reviewed papers, one .ris file each
   preprints/     ← preprints, one .ris file each (shown with a "Preprint" tag)
   highlighted.txt← DOIs shown under "Highlighted" and on the home page
+data/presentations.txt ← talks and posters (Presentations page + CV)
 pages/           ← text of each page (Home, Experience, Awards, …)
-templates/       ← header/footer shared by all pages
+templates/       ← header/footer shared by all pages; cv.html = the CV
 assets/          ← CSS, JavaScript, photo, icons
 site.json        ← name, menu, profile links, how your name is recognized
 scripts/build.py ← builds everything into _site/
@@ -54,6 +55,36 @@ Open the file in any text editor:
 
 When a preprint gets published, delete its file from `preprints/` (or keep
 both) and add the published version to `papers/`.
+
+## CV (PDF)
+
+Every build creates `cv.html` and `cv.pdf` (printed with headless Chrome),
+linked from the menu and the home page. The CV fills in automatically:
+
+- **Publications / Manuscripts accepted / Preprints** come from the `.ris`
+  files. A paper with `N1  - status: In press` goes under "Manuscripts accepted";
+  remove that line once it is published.
+- **Invited talks / Oral / Poster presentations** come from
+  `data/presentations.txt`.
+
+Everything else (education, skills, projects, awards, teaching, …) is written in
+`templates/cv.html`; edit the text there and commit.
+
+## Adding a presentation
+
+Add a block to `data/presentations.txt` (blank line between blocks):
+
+```
+year: 2026
+type: oral
+title: Your talk title
+event: Conference name
+location: City, State, Country
+```
+
+`type` can be `oral`, `poster`, `invited`, or several (`oral, poster`); add
+`mode: online` for virtual talks. Commit, and the Presentations page and the
+CV both update.
 
 ## Highlighted papers
 
