@@ -290,3 +290,5 @@ html:has(.cards-toolbar) { scroll-padding-top: 200px; }
 .grant > p:last-child { margin: 0; color: var(--muted); font-size: .95rem; }
 .list-card p strong { color: var(--ink); font-weight: 600; }
 @media (max-width: 860px) { .grants { grid-template-columns: minmax(0, 1fr); } }
+.about-sub { margin: 0 0 6px; font-family: var(--sans); font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+.about p + .about-sub { margin-top: 22px; }
