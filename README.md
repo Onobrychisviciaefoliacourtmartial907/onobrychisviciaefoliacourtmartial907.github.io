@@ -70,6 +70,13 @@ linked from the menu and the home page. The CV fills in automatically:
 Everything else (education, skills, projects, awards, teaching, …) is written in
 `templates/cv.html`; edit the text there and commit.
 
+A Word version is kept **in the repository only** (not on the website):
+`cv/Helena_Mannochio_Russo_CV.docx`, next to a copy of the PDF. The GitHub
+Action regenerates both and commits them whenever the CV content changes, so
+run `git pull` before editing locally. To refresh them on your computer:
+`python3 -m pip install --user python-docx` (once), then
+`python3 scripts/build.py --cv-files`.
+
 ## Adding a presentation
 
 Add a block to `data/presentations.txt` (blank line between blocks):

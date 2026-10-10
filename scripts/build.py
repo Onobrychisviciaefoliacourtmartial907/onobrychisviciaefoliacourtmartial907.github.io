@@ -4,6 +4,7 @@
     python scripts/build.py            # build
     python scripts/build.py --serve    # build and preview at http://localhost:8000
     python scripts/build.py --serve --compare-layouts   # + one page per publication layout
+    python scripts/build.py --cv-files # also refresh cv/*.docx and cv/*.pdf in the repo
 
 Pages come from pages/*.html wrapped in templates/layout.html. The publications
 page is generated from the .ris files in publications/papers/ and
@@ -470,6 +471,34 @@ def make_pdf(html_path, pdf_path):
     return True
 
 
+def update_repo_cv(stable_html, cv_html):
+    """Keep cv/<name>_CV.docx and .pdf in the repository in sync with the website CV.
+
+    The files are rewritten only when the CV content changed (the "last updated"
+    date is ignored), so the GitHub Action does not commit a new copy every run.
+    """
+    import hashlib
+    folder = ROOT / "cv"
+    base = CONFIG["name"].replace(" ", "_") + "_CV"
+    docx_path, pdf_path, stamp = folder / f"{base}.docx", folder / f"{base}.pdf", folder / ".source-hash"
+    digest = hashlib.sha256(stable_html.encode("utf-8")).hexdigest()
+    up_to_date = stamp.exists() and stamp.read_text().strip() == digest and docx_path.exists() and pdf_path.exists()
+    if up_to_date:
+        print("  repository CV files already up to date")
+        return
+    try:
+        from cv_docx import html_to_docx
+    except ImportError:
+        print("  warning: python-docx is not installed (pip install python-docx); CV .docx not updated")
+        return
+    folder.mkdir(exist_ok=True)
+    html_to_docx(cv_html, docx_path, title=f"{CONFIG['name']} — Curriculum Vitae")
+    if (OUT / "cv.pdf").exists():
+        shutil.copyfile(OUT / "cv.pdf", pdf_path)
+    stamp.write_text(digest + "\n")
+    print(f"  updated {docx_path.relative_to(ROOT)} and {pdf_path.name}")
+
+
 def profile_links():
     return "".join(
         f'<a class="profile" href="{html.escape(url)}" target="_blank" rel="noopener">'
@@ -478,7 +507,7 @@ def profile_links():
     )
 
 
-def build(compare_layouts=False):
+def build(compare_layouts=False, cv_files=False):
     print("Building site…")
     pubs = load_publications()
     highlighted = load_highlighted(pubs)
@@ -521,6 +550,8 @@ def build(compare_layouts=False):
     (OUT / "cv.html").write_text(cv_html, encoding="utf-8")
     if make_pdf(OUT / "cv.html", OUT / "cv.pdf"):
         print("  wrote CV: cv.html and cv.pdf")
+    if cv_files:
+        update_repo_cv(cv_html.replace(cv_fill["cv_updated"], ""), cv_html)
     if compare_layouts:  # side-by-side previews: publications-list.html, -timeline.html, -cards.html
         for name in ("list", "timeline", "cards"):
             write(f"publications-{name}.html", "Publications", publications_page(pubs, highlighted, name), "publications.html")
@@ -533,8 +564,9 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--serve", action="store_true", help="preview at http://localhost:8000 after building")
     ap.add_argument("--compare-layouts", action="store_true", help="also write one preview page per publication layout")
+    ap.add_argument("--cv-files", action="store_true", help="also update cv/*.docx and cv/*.pdf in the repository")
     args = ap.parse_args()
-    build(args.compare_layouts)
+    build(args.compare_layouts, args.cv_files)
     if args.serve:
         import functools
         import http.server
