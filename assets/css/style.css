@@ -1,12 +1,12 @@
 :root {
-  --paper: #f7f5f0;
+  --paper: #f5f7fa;
   --surface: #ffffff;
-  --ink: #1d2421;
-  --muted: #5d6662;
-  --line: #e4e0d6;
-  --accent: #1f6b5c;
-  --accent-dark: #134a3f;
-  --accent-soft: #e3efeb;
+  --ink: #1b2230;
+  --muted: #5b6475;
+  --line: #dfe4ec;
+  --accent: #1f4f8f;
+  --accent-dark: #143866;
+  --accent-soft: #e3ebf6;
   --warm: #b4682c;
   --radius: 14px;
   --shadow: 0 1px 2px rgba(29, 36, 33, .04), 0 4px 18px rgba(29, 36, 33, .05);
@@ -36,7 +36,7 @@ p { margin: 0 0 1em; }
 /* ---------- header ---------- */
 .site-header {
   position: sticky; top: 0; z-index: 20;
-  background: rgba(247, 245, 240, .88);
+  background: rgba(245, 247, 250, .88);
   backdrop-filter: saturate(160%) blur(10px);
   border-bottom: 1px solid var(--line);
 }
@@ -81,7 +81,7 @@ main.wrap { padding-top: 48px; padding-bottom: 72px; }
 .portrait img { width: 100%; height: auto; border-radius: 22px; aspect-ratio: 4 / 5; object-fit: cover; box-shadow: var(--shadow); }
 .portrait::before {
   content: ""; position: absolute; inset: 18px -18px -18px 18px; z-index: -1;
-  border-radius: 22px; background: var(--accent-soft); border: 1px solid #cfe2db;
+  border-radius: 22px; background: var(--accent-soft); border: 1px solid #cad9ee;
 }
 .profiles { display: flex; flex-wrap: wrap; gap: 8px; }
 .profile {
@@ -98,7 +98,7 @@ main.wrap { padding-top: 48px; padding-bottom: 72px; }
 .topic p { color: var(--muted); font-size: .95rem; margin: 0; }
 .topic .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); margin-bottom: 14px; }
 .topic:nth-child(2) .dot { background: var(--warm); }
-.topic:nth-child(3) .dot { background: #6b7f3a; }
+.topic:nth-child(3) .dot { background: #3f8a8c; }
 .topic:nth-child(4) .dot { background: #4d6c8f; }
 .about { padding: 32px; display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 32px; }
 .about h2 { font-size: 1.35rem; }
@@ -175,7 +175,7 @@ main.wrap { padding-top: 48px; padding-bottom: 72px; }
 .contact-grid p { margin: 0 0 6px; }
 
 /* ---------- footer ---------- */
-.site-footer { border-top: 1px solid var(--line); background: #efece4; color: var(--muted); font-size: .9rem; }
+.site-footer { border-top: 1px solid var(--line); background: #eaeef4; color: var(--muted); font-size: .9rem; }
 .footer-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px 32px; padding-top: 36px; padding-bottom: 36px; align-items: start; }
 .footer-name { margin: 0 0 2px; color: var(--ink); font-family: var(--serif); font-weight: 600; font-size: 1.1rem; }
 .footer-inner p { margin: 0; }
@@ -203,3 +203,83 @@ main.wrap { padding-top: 48px; padding-bottom: 72px; }
   .brand > span:last-child { font-size: 1rem; }
 }
 .list-card p.tags { margin-top: 8px; }
+
+/* ---------- publications: shared bits for "timeline" and "cards" ---------- */
+.pub-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin: 0 0 4px; font-size: .74rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.pub-meta .journal { color: var(--accent); }
+.pub-meta .status { color: var(--warm); text-transform: none; letter-spacing: 0; font-weight: 500; font-size: .8rem; }
+.pub-meta .badge { margin-left: 0; text-transform: none; letter-spacing: 0; }
+.entry-pub .pub-title { font-size: 1rem; }
+.featured-wrap { margin-bottom: 40px; }
+.featured-wrap > h2 { font-size: 1.35rem; margin-bottom: 14px; }
+.featured { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.featured .pub {
+  display: block; padding: 18px 20px 16px; border: 1px solid var(--line); border-top: 3px solid var(--accent);
+  border-radius: 12px; background: var(--surface); box-shadow: var(--shadow);
+}
+.featured .pub:nth-child(3n+2) { border-top-color: var(--warm); }
+.featured .pub:nth-child(3n+3) { border-top-color: #3f8a8c; }
+.featured .pub-title { font-family: var(--serif); font-size: 1.12rem; font-weight: 600; line-height: 1.3; margin-bottom: 8px; }
+
+/* ---------- publications: "timeline" layout ---------- */
+.tl-bar {
+  position: sticky; top: 68px; z-index: 10; margin: 0 -20px 12px; padding: 12px 20px 0;
+  background: rgba(245, 247, 250, .94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line);
+}
+.tl-controls { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.tl-controls input {
+  flex: 1 1 260px; min-width: 0; padding: 9px 14px; font: inherit; font-size: .95rem;
+  border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink);
+}
+.tl-controls input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.tabs { display: flex; gap: 2px; overflow-x: auto; margin-top: 10px; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs a { flex: none; padding: 8px 12px 10px; color: var(--muted); font-size: .9rem; font-weight: 600; border-bottom: 2px solid transparent; }
+.tabs a:hover { color: var(--ink); text-decoration: none; }
+.tabs a.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tl-bar + .legend { margin: 0 0 28px; }
+.tl-group { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 28px; padding: 26px 0; border-top: 1px solid var(--line); }
+.tl-year { position: sticky; top: 190px; align-self: start; }
+.tl-year span { display: block; font-family: var(--serif); font-size: 2.6rem; font-weight: 600; line-height: 1; color: var(--accent); }
+.tl-year small { display: block; margin-top: 6px; color: var(--muted); font-size: .82rem; }
+.tl-list { border-left: 2px solid var(--accent-soft); }
+.tl-list .pub { display: block; position: relative; padding: 4px 0 22px 24px; border-top: 0; }
+.tl-list .pub:last-child { padding-bottom: 0; }
+.tl-list .pub::before {
+  content: ""; position: absolute; left: -7px; top: 7px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--surface); border: 2px solid var(--accent);
+}
+.tl-list .pub[data-kind="preprint"]::before { border-color: var(--warm); }
+
+/* ---------- publications: "cards" layout ---------- */
+.cards-toolbar { position: sticky; top: 80px; z-index: 10; }
+.year-select { display: flex; align-items: center; gap: 8px; font-size: .85rem; font-weight: 600; color: var(--muted); }
+.year-select select {
+  padding: 7px 30px 7px 12px; font: inherit; font-weight: 600; color: var(--ink); border: 1px solid var(--line); border-radius: 999px;
+  background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235b6475'/%3E%3C/svg%3E") no-repeat right 12px center;
+  appearance: none; cursor: pointer;
+}
+.cards-group { margin-bottom: 32px; }
+.group-bar { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); font-size: 1.6rem; }
+.group-bar small { font-family: var(--sans); font-size: .8rem; font-weight: 600; color: var(--muted); }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+.card-grid .pub {
+  display: flex; flex-direction: column; padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px;
+  background: var(--surface); box-shadow: var(--shadow); transition: border-color .15s, transform .15s;
+}
+.card-grid .pub:first-child { padding-top: 16px; }
+.card-grid .pub:hover { border-color: var(--accent); transform: translateY(-1px); }
+.card-grid .pub[data-kind="preprint"] { background: linear-gradient(var(--surface), var(--surface)) padding-box; border-left: 3px solid var(--warm); }
+
+@media (max-width: 860px) {
+  .tl-bar { margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; }
+  .tl-group { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .tl-year { position: static; display: flex; align-items: baseline; gap: 10px; }
+  .tl-year span { font-size: 2rem; }
+  .cards-toolbar { position: static; }
+  .card-grid, .featured { grid-template-columns: minmax(0, 1fr); }
+}
+html:has(.tl-bar) { scroll-padding-top: 190px; }
+html:has(.cards-toolbar) { scroll-padding-top: 200px; }
+.featured-wrap { padding: 0; }
+.entry-pub .more { align-self: flex-start; text-align: left; }

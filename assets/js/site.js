@@ -25,14 +25,20 @@ if (search) {
   const groups = document.querySelectorAll(".year-group");
   const highlighted = document.getElementById("highlighted");
   const empty = document.getElementById("no-results");
+  const yearSelect = document.getElementById("year-select");
   let kind = "all";
 
   const apply = () => {
     const terms = search.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
-    const filtering = terms.length > 0 || kind !== "all";
+    const year = yearSelect ? yearSelect.value : "";
+    const filtering = terms.length > 0 || kind !== "all" || year !== "";
     let shown = 0;
     groups.forEach((group) => {
       let visible = 0;
+      if (year && group.id !== year) {
+        group.hidden = true;
+        return;
+      }
       group.querySelectorAll(".pub").forEach((li) => {
         const text = li.textContent.toLowerCase();
         const ok = (kind === "all" || li.dataset.kind === kind) && terms.every((t) => text.includes(t));
@@ -47,6 +53,7 @@ if (search) {
   };
 
   search.addEventListener("input", apply);
+  if (yearSelect) yearSelect.addEventListener("change", () => { apply(); window.scrollTo({ top: 0 }); });
   document.querySelectorAll(".chip").forEach((chip) => {
     chip.addEventListener("click", () => {
       document.querySelectorAll(".chip").forEach((c) => c.classList.toggle("on", c === chip));
@@ -56,12 +63,16 @@ if (search) {
   });
 
   // Highlight the year pill for the section currently on screen
-  const pills = [...document.querySelectorAll(".jump .pill")];
+  const pills = [...document.querySelectorAll(".year-nav a")];
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((e) => {
       if (!e.isIntersecting) return;
-      pills.forEach((p) => p.classList.toggle("active", p.getAttribute("href") === "#" + e.target.id));
+      pills.forEach((p) => {
+        const on = p.getAttribute("href") === "#" + e.target.id;
+        p.classList.toggle("active", on);
+        if (on && p.parentElement.classList.contains("tabs")) p.scrollIntoView({ block: "nearest", inline: "nearest" });
+      });
     });
   }, { rootMargin: "-90px 0px -70% 0px" });
-  document.querySelectorAll(".pub-group[id]").forEach((s) => observer.observe(s));
+  document.querySelectorAll("#highlighted, .year-group").forEach((s) => observer.observe(s));
 }

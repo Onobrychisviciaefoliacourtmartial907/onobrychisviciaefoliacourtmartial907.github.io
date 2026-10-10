@@ -3,6 +3,7 @@
 
     python scripts/build.py            # build
     python scripts/build.py --serve    # build and preview at http://localhost:8000
+    python scripts/build.py --serve --compare-layouts   # + one page per publication layout
 
 Pages come from pages/*.html wrapped in templates/layout.html. The publications
 page is generated from the .ris files in publications/papers/ and
@@ -98,7 +99,7 @@ def to_record(rec, kind, source):
     date = first(rec, "DA", "PY", "Y1", "Y2")
     year_m = re.search(r"(19|20)\d{2}", date)
     date_key = tuple(int(x) for x in re.findall(r"\d+", date)[:3]) if date else ()
-    venue = first(rec, "T2", "JO", "JF", "JA", "J2")
+    venue = html.unescape(first(rec, "T2", "JO", "JF", "JA", "J2"))
     if not venue and kind == "preprint":
         venue = "bioRxiv" if doi.startswith(("10.1101/", "10.64898/")) else first(rec, "PB") or "Preprint"
     notes = [n.split(":", 1)[1].strip() for n in rec.get("N1", []) if n.lower().startswith("status:")]
@@ -106,7 +107,7 @@ def to_record(rec, kind, source):
     authors = []
     for a in rec.get("AU", []) + rec.get("A1", []):
         display, marks, raw = split_author(a)
-        authors.append({"name": display, "marks": marks, "me": is_me(raw)})
+        authors.append({"name": html.unescape(display), "marks": marks, "me": is_me(raw)})
     return {
         "title": title, "authors": authors, "venue": venue, "year": int(year_m.group(0)) if year_m else 0,
         "date_key": date_key, "doi": doi, "url": url, "kind": kind, "status": "; ".join(notes),
@@ -169,10 +170,10 @@ def safe_title(title):
     return t
 
 
-def render_authors(authors):
+def render_authors(authors, collapse_over=COLLAPSE_OVER, head=10, tail=3):
     n = len(authors)
-    collapse = n > COLLAPSE_OVER
-    keep = set(range(10)) | set(range(n - 3, n)) if collapse else set(range(n))
+    collapse = n > collapse_over
+    keep = set(range(head)) | set(range(n - tail, n)) if collapse else set(range(n))
     keep |= {i for i, a in enumerate(authors) if a["me"] or a["marks"]}
     parts, gap = [], False
     for i, a in enumerate(authors):
@@ -187,25 +188,108 @@ def render_authors(authors):
     return f'<p class="authors{" collapsed" if collapse else ""}">{"".join(parts)}</p>{toggle}'
 
 
+def title_link(p):
+    title = safe_title(p["title"])
+    return f'<a href="{html.escape(p["url"])}" target="_blank" rel="noopener">{title}</a>' if p["url"] else title
+
+
 def render_pub(p, number):
+    """Numbered list entry (the "list" layout and the home page)."""
     badge = '<span class="badge">Preprint</span>' if p["kind"] == "preprint" else ""
     status = f', {html.escape(p["status"])}' if p["status"] else ""
-    title = safe_title(p["title"])
-    title_html = f'<a href="{html.escape(p["url"])}" target="_blank" rel="noopener">{title}</a>' if p["url"] else title
     return (
         f'<li class="pub" data-kind="{p["kind"]}">'
         f'<span class="num">{number}.</span><div class="body">'
-        f'<h3 class="pub-title">{title_html}</h3>'
+        f'<h3 class="pub-title">{title_link(p)}</h3>'
         f'{render_authors(p["authors"])}'
         f'<p class="venue"><strong>{html.escape(p["venue"])}</strong>{status}, {p["year"] or "n.d."} {badge}</p>'
         f"</div></li>"
     )
 
 
-def publications_page(pubs, highlighted):
+def render_entry(p, show_year=True, compact=False, tag="li"):
+    """Journal-first entry used by the "timeline" and "cards" layouts."""
+    meta = [f'<span class="journal">{html.escape(p["venue"])}</span>']
+    if p["status"]:
+        meta.append(f'<span class="status">{html.escape(p["status"])}</span>')
+    if show_year:
+        meta.append(f'<span class="yr">{p["year"] or "n.d."}</span>')
+    if p["kind"] == "preprint":
+        meta.append('<span class="badge">Preprint</span>')
+    authors = render_authors(p["authors"], 6, 3, 1) if compact else render_authors(p["authors"])
+    return (
+        f'<{tag} class="pub entry-pub" data-kind="{p["kind"]}">'
+        f'<p class="pub-meta">{"".join(meta)}</p>'
+        f'<h3 class="pub-title">{title_link(p)}</h3>{authors}</{tag}>'
+    )
+
+
+SEARCH_CONTROLS = """
+      <input type="search" id="pub-search" placeholder="Search title, author, journal…" aria-label="Search publications">
+      <div class="filters" role="group" aria-label="Filter">
+        <button type="button" class="chip on" data-filter="all">All</button>
+        <button type="button" class="chip" data-filter="paper">Papers</button>
+        <button type="button" class="chip" data-filter="preprint">Preprints</button>
+      </div>"""
+LEGEND = '<p class="legend"><span><b class="mark">†</b> co-first authors</span><span><b class="mark">*</b> corresponding author</span><span><b class="me-swatch">Name</b> me</span></p>'
+
+
+def publications_page(pubs, highlighted, layout=None):
+    layout = layout or CONFIG.get("publication_layout", "list")
     years = sorted({p["year"] for p in pubs}, reverse=True)
     n_pre = sum(p["kind"] == "preprint" for p in pubs)
     n_first = sum(1 for p in pubs if p["authors"] and (p["authors"][0]["me"] or any(a["me"] and "†" in a["marks"] for a in p["authors"])))
+    head = f"""
+<section class="page-head">
+  <p class="eyebrow">Research output</p>
+  <h1>Publications</h1>
+  <p class="lede">{len(pubs) - n_pre} peer-reviewed papers and {n_pre} preprints, {n_first} as first or co-first author.
+  For citation metrics, see my <a href="https://scholar.google.com/citations?user=-HEC0H8AAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar profile</a>.</p>
+</section>"""
+    empty = '<p id="no-results" class="card" hidden>No publications match your search.</p>'
+    by_year = {y: [p for p in pubs if p["year"] == y] for y in years}
+
+    if layout == "timeline":
+        tabs = ['<a href="#highlighted">Highlighted</a>'] if highlighted else []
+        tabs += [f'<a href="#year-{y}">{y or "n.d."}</a>' for y in years]
+        featured = "".join(render_entry(p, compact=True, tag="article") for p in highlighted)
+        groups = "".join(
+            f'<section id="year-{y}" class="year-group tl-group"><div class="tl-year"><span>{y or "n.d."}</span>'
+            f'<small>{len(items)} {"paper" if len(items) == 1 else "papers"}</small></div>'
+            f'<ol class="pubs tl-list">{"".join(render_entry(p, show_year=False) for p in items)}</ol></section>'
+            for y, items in by_year.items()
+        )
+        return f"""{head}
+<div class="tl-bar">
+  <div class="tl-controls">{SEARCH_CONTROLS}</div>
+  <nav class="year-nav tabs" aria-label="Years">{"".join(tabs)}</nav>
+</div>
+{LEGEND}
+{f'<section id="highlighted" class="pub-group featured-wrap"><h2>Highlighted</h2><div class="featured">{featured}</div></section>' if highlighted else ""}
+{empty}
+<div class="timeline-pubs">{groups}</div>"""
+
+    if layout == "cards":
+        options = "".join(f'<option value="year-{y}">{y or "n.d."} ({len(items)})</option>' for y, items in by_year.items())
+        featured = "".join(render_entry(p, compact=True, tag="article") for p in highlighted)
+        groups = "".join(
+            f'<section id="year-{y}" class="year-group cards-group"><h2 class="group-bar"><span>{y or "n.d."}</span>'
+            f'<small>{len(items)}</small></h2>'
+            f'<ol class="pubs card-grid">{"".join(render_entry(p, show_year=False, compact=True) for p in items)}</ol></section>'
+            for y, items in by_year.items()
+        )
+        return f"""{head}
+<div class="toolbar card cards-toolbar">{SEARCH_CONTROLS}
+  <label class="year-select">Year
+    <select id="year-select"><option value="">All years</option>{options}</select>
+  </label>
+  {LEGEND}
+</div>
+{f'<section id="highlighted" class="pub-group featured-wrap"><h2>Highlighted</h2><div class="featured">{featured}</div></section>' if highlighted else ""}
+{empty}
+{groups}"""
+
+    # default: "list" — numbered lists with a sticky year sidebar
     jump = ['<a class="pill active" href="#highlighted">Highlighted</a>'] if highlighted else []
     jump += [f'<a class="pill" href="#year-{y}">{y or "n.d."}</a>' for y in years]
     sections = []
@@ -213,32 +297,19 @@ def publications_page(pubs, highlighted):
         items = "".join(render_pub(p, i + 1) for i, p in enumerate(highlighted))
         sections.append(f'<section id="highlighted" class="card pub-group"><h2>Highlighted papers</h2><ol class="pubs">{items}</ol></section>')
     sections.append('<h2 class="all-heading">All publications</h2>')
-    for y in years:
-        items = "".join(render_pub(p, p["number"]) for p in pubs if p["year"] == y)
-        sections.append(f'<section id="year-{y}" class="card pub-group year-group"><h2>{y or "Undated"}</h2><ol class="pubs">{items}</ol></section>')
-    return f"""
-<section class="page-head">
-  <p class="eyebrow">Research output</p>
-  <h1>Publications</h1>
-  <p class="lede">{len(pubs) - n_pre} peer-reviewed papers and {n_pre} preprints, {n_first} as first or co-first author.
-  For citation metrics, see my <a href="https://scholar.google.com/citations?user=-HEC0H8AAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar profile</a>.</p>
-</section>
+    for y, items in by_year.items():
+        sections.append(f'<section id="year-{y}" class="card pub-group year-group"><h2>{y or "Undated"}</h2><ol class="pubs">{"".join(render_pub(p, p["number"]) for p in items)}</ol></section>')
+    return f"""{head}
 <div class="pub-layout">
   <aside class="jump">
     <p class="eyebrow">Jump to</p>
-    <nav>{"".join(jump)}</nav>
+    <nav class="year-nav">{"".join(jump)}</nav>
   </aside>
   <div class="pub-main">
-    <div class="toolbar card">
-      <input type="search" id="pub-search" placeholder="Search title, author, journal…" aria-label="Search publications">
-      <div class="filters" role="group" aria-label="Filter">
-        <button type="button" class="chip on" data-filter="all">All</button>
-        <button type="button" class="chip" data-filter="paper">Papers</button>
-        <button type="button" class="chip" data-filter="preprint">Preprints</button>
-      </div>
-      <p class="legend"><span><b class="mark">†</b> co-first authors</span><span><b class="mark">*</b> corresponding author</span><span><b class="me-swatch">Name</b> me</span></p>
+    <div class="toolbar card">{SEARCH_CONTROLS}
+      {LEGEND}
     </div>
-    <p id="no-results" class="card" hidden>No publications match your search.</p>
+    {empty}
     {"".join(sections)}
   </div>
 </div>"""
@@ -257,7 +328,7 @@ def profile_links():
     )
 
 
-def build():
+def build(compare_layouts=False):
     print("Building site…")
     pubs = load_publications()
     highlighted = load_highlighted(pubs)
@@ -280,14 +351,21 @@ def build():
     def fill(text):
         return re.sub(r"\{\{\s*(\w+)\s*\}\}", lambda m: values.get(m.group(1), m.group(0)), text)
 
-    for page, title in CONFIG["pages"].items():
-        body = publications_page(pubs, highlighted) if page == "publications.html" else (ROOT / "pages" / page).read_text(encoding="utf-8")
+    def write(page, title, body, current=None):
         nav = "".join(
-            f'<a href="{href}"{" aria-current=page" if href == page else ""}>{label}</a>' for href, label in CONFIG["nav"]
+            f'<a href="{href}"{" aria-current=page" if href == (current or page) else ""}>{label}</a>' for href, label in CONFIG["nav"]
         )
         full_title = CONFIG["name"] if page == "index.html" else f"{title} · {CONFIG['name']}"
         out = fill(layout.replace("{{content}}", fill(body)).replace("{{nav}}", nav).replace("{{title}}", html.escape(full_title)))
         (OUT / page).write_text(out, encoding="utf-8")
+
+    for page, title in CONFIG["pages"].items():
+        body = publications_page(pubs, highlighted) if page == "publications.html" else (ROOT / "pages" / page).read_text(encoding="utf-8")
+        write(page, title, body)
+    if compare_layouts:  # side-by-side previews: publications-list.html, -timeline.html, -cards.html
+        for name in ("list", "timeline", "cards"):
+            write(f"publications-{name}.html", "Publications", publications_page(pubs, highlighted, name), "publications.html")
+        print("  layout previews: publications-list.html, publications-timeline.html, publications-cards.html")
     (OUT / ".nojekyll").write_text("")
     print(f"  wrote {len(CONFIG['pages'])} pages to {OUT.relative_to(ROOT)}/")
 
@@ -295,8 +373,9 @@ def build():
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--serve", action="store_true", help="preview at http://localhost:8000 after building")
+    ap.add_argument("--compare-layouts", action="store_true", help="also write one preview page per publication layout")
     args = ap.parse_args()
-    build()
+    build(args.compare_layouts)
     if args.serve:
         import functools
         import http.server
