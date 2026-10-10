@@ -294,8 +294,8 @@ def publications_page(pubs, highlighted, layout=None):
     jump += [f'<a class="pill" href="#year-{y}">{y or "n.d."}</a>' for y in years]
     sections = []
     if highlighted:
-        items = "".join(render_pub(p, i + 1) for i, p in enumerate(highlighted))
-        sections.append(f'<section id="highlighted" class="card pub-group"><h2>Highlighted papers</h2><ol class="pubs">{items}</ol></section>')
+        featured = "".join(render_entry(p, compact=True, tag="article") for p in highlighted)
+        sections.append(f'<section id="highlighted" class="pub-group featured-wrap"><h2>Highlighted papers</h2><div class="featured">{featured}</div></section>')
     sections.append('<h2 class="all-heading">All publications</h2>')
     for y, items in by_year.items():
         sections.append(f'<section id="year-{y}" class="card pub-group year-group"><h2>{y or "Undated"}</h2><ol class="pubs">{"".join(render_pub(p, p["number"]) for p in items)}</ol></section>')
