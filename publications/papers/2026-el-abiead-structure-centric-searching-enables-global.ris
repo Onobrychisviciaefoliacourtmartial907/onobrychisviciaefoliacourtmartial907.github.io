@@ -3,7 +3,7 @@ DO  - 10.1038/s41587-026-03082-8
 UR  - http://dx.doi.org/10.1038/s41587-026-03082-8
 TI  - Structure-centric searching enables global mapping of the public metabolome
 T2  - Nature Biotechnology
-AU  - El Abiead, Yasin
+AU  - El Abiead, Yasin *
 AU  - Seo, Jeong In
 AU  - Charron-Lamoureux, Vincent
 AU  - Strobel, Michael
@@ -32,8 +32,8 @@ AU  - Payne, Thomas
 AU  - Fahy, Eoin
 AU  - Subramaniam, Shankar
 AU  - Vizcaíno, Juan Antonio
-AU  - Wang, Mingxun
-AU  - Dorrestein, Pieter C.
+AU  - Wang, Mingxun *
+AU  - Dorrestein, Pieter C. *
 PY  - 2026
 DA  - 2026/04/15
 PB  - Springer Science and Business Media LLC
