@@ -1,0 +1,62 @@
+Provider: Silverchair
+Database: AmericanChemicalSociety
+Content: text/plain; charset="UTF-8"
+
+TY  - JOUR
+AU  - Tamanna, Ifrat
+AU  - Salonen, Katja
+AU  - Mannochio-Russo, Helena
+AU  - Kråkström, Matilda
+AU  - Gomes, Paulo Wender P.
+AU  - Charron-Lamoureux, Vincent
+AU  - Mohanty, Ipsita
+AU  - Forssten, Sofia D.
+AU  - Ouwehand, Arthur C.
+AU  - Hyötyläinen, Tuulia
+AU  - Dickens, Alex M.
+AU  - Dorrestein, Pieter C.
+AU  - Orešič, Matej
+AU  - Lamichhane, Santosh
+T1  - Emerging Microbial
+Lipid Shifts in a Multistage Simulated
+Gut Inoculated with Human Fecal Microbiota
+PY  - 2026
+Y1  - 2026/09/04
+DO  - 10.1021/acs.jproteome.6c00050
+JO  - Journal of Proteome Research
+JA  - J. Proteome Res.
+VL  - 25
+IS  - 9
+SP  - 4577
+EP  - 4588
+SN  - 1535-3893
+AB  - Food residues that
+bypass human digestion are further
+digested
+by gut microbes, leading to the production of diverse metabolites,
+including lipids. To investigate how lipids in our intestine are affected
+during this transition, we used a colon simulator with four distinct
+vessels (V1–V4) that mimic the proximal to distal part of the
+human colon. In total, 44 samples were collected from the colon simulator
+vessels (V1–V4). We observed dynamic shifts in a diverse array
+of microbially linked lipid molecules in the simulated intestinal
+chyme, including bile acids and N-acyl amides with
+short- and odd-chain lipids. Histamine-linked N-acyl
+lipids (histamine-C5) increased from the proximal to the distal colon
+vessels (pH 5.5–7.0), whereas putrescine-linked ones (putrescine-C19:2),
+initially abundant in the media, decreased across the colon vessels.
+We uncovered dynamic associations between in vitro-derived short-chain N-acyl lipids (C4:0, C5, C6, and C7 conjugates) and major
+lipid species such as cholesterol esters, phosphatidylethanolamines,
+ceramides, and sphingomyelins. To determine the broader relevance
+of these findings, we applied a reverse metabolomics approach and
+examined N-acyl lipid profiles in human small intestine
+and fecal samples from public data sets. Our results validate the
+colon simulator as a dynamic model for studying microbially transformed
+metabolites and suggest its potential utility as a platform for discovering
+novel microbial metabolites with relevance to human and animal health.
+Y2  - 10/11/2026
+UR  - https://doi.org/10.1021/acs.jproteome.6c00050
+ER  - 
+
+
+
