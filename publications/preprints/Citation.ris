@@ -1,0 +1,24 @@
+
+TY  - JOUR
+T1  - An Annotation Consistency Checker for Evidence-Based Evaluation of Untargeted LC-MS/MS Metabolite Annotations
+AU  - Nunes, Wilhan D. G.
+AU  - Mathias, Edward J.
+AU  - Terra, Charles
+AU  - Le Gouellec, Audrey
+AU  - Wang, Mingxun
+AU  - Dorrestein, Pieter C.
+AU  - Mannochio-Russo, Helena
+N1  - doi: 10.26434/chemrxiv.15010158/v1
+DO  - 10.26434/chemrxiv.15010158/v1
+T2  - ChemRxiv
+JF  - ChemRxiv
+JO  - ChemRxiv
+VL  - 2026
+IS  - 1009
+PB  - ChemRxiv
+M3  - doi: 10.26434/chemrxiv.15010158/v1
+UR  - https://doi.org/10.26434/chemrxiv.15010158/v1
+Y2  - 2026/10/10
+N2  - Untargeted LC-MS/MS metabolomics routinely produces complex annotation landscapes in which individual spectra can yield multiple candidate metabolite annotations. Although spectral similarity provides an essential foundation for library-based annotation, determining whether a candidate annotation is consistent with the available evidence and whether alternative explanations remain plausible requires integration of multiple lines of evidence. In current practice, this evaluation is largely embedded in expert judgment, making annotation review difficult to teach, standardize, and reproduce. Here, we introduce an annotation consistency checker that aids this expert review process by generating a user-inspectable report for spectral library matches. The framework integrates complementary evidence dimensions, including spectral agreement, structural relationships among candidate annotations, and competing library matches to highlight annotations that are supported by, or inconsistent with, the available data. Biological context is provided separately to aid interpretation of metabolite occurrence across organisms, tissues, and sample types but is not incorporated into the annotation score. By enabling systematic evaluation of multiple evidence streams, this approach provides a transparent workflow that helps users critically assess metabolite annotations, reduce overinterpretation of spectral matches, and make informed decisions beyond only accepting the top-ranked library match.
+AB  - Untargeted LC-MS/MS metabolomics routinely produces complex annotation landscapes in which individual spectra can yield multiple candidate metabolite annotations. Although spectral similarity provides an essential foundation for library-based annotation, determining whether a candidate annotation is consistent with the available evidence and whether alternative explanations remain plausible requires integration of multiple lines of evidence. In current practice, this evaluation is largely embedded in expert judgment, making annotation review difficult to teach, standardize, and reproduce. Here, we introduce an annotation consistency checker that aids this expert review process by generating a user-inspectable report for spectral library matches. The framework integrates complementary evidence dimensions, including spectral agreement, structural relationships among candidate annotations, and competing library matches to highlight annotations that are supported by, or inconsistent with, the available data. Biological context is provided separately to aid interpretation of metabolite occurrence across organisms, tissues, and sample types but is not incorporated into the annotation score. By enabling systematic evaluation of multiple evidence streams, this approach provides a transparent workflow that helps users critically assess metabolite annotations, reduce overinterpretation of spectral matches, and make informed decisions beyond only accepting the top-ranked library match.
+ER  - 
