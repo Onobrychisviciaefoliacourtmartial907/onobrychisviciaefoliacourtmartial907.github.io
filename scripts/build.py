@@ -135,10 +135,14 @@ def load_publications():
                     continue
                 seen[key] = p["source"]
                 pubs.append(p)
-    pubs.sort(key=lambda p: (p["year"], p["date_key"], norm(p["title"])), reverse=True)
+    pubs.sort(key=lambda p: (is_in_press(p), p["year"], p["date_key"], norm(p["title"])), reverse=True)
     for i, p in enumerate(pubs):
         p["number"] = len(pubs) - i
     return pubs
+
+
+def is_in_press(p):
+    return p["kind"] == "paper" and "press" in p["status"].lower()
 
 
 def load_highlighted(pubs):
@@ -295,14 +299,20 @@ def publications_page(pubs, highlighted, layout=None):
 {groups}"""
 
     # default: "list" — numbered lists with a sticky year sidebar
+    in_press = [p for p in pubs if is_in_press(p)]
+    year_items = {y: [p for p in items if not is_in_press(p)] for y, items in by_year.items()}
+    year_items = {y: items for y, items in year_items.items() if items}
     jump = ['<a class="pill active" href="#highlighted">Highlighted</a>'] if highlighted else []
-    jump += [f'<a class="pill" href="#year-{y}">{y or "n.d."}</a>' for y in years]
+    jump += ['<a class="pill" href="#in-press">In press</a>'] if in_press else []
+    jump += [f'<a class="pill" href="#year-{y}">{y or "n.d."}</a>' for y in year_items]
     sections = []
     if highlighted:
         featured = "".join(render_entry(p, compact=True, tag="article") for p in highlighted)
         sections.append(f'<section id="highlighted" class="pub-group featured-wrap"><h2>Highlighted papers</h2><div class="featured">{featured}</div></section>')
     sections.append('<h2 class="all-heading">All publications</h2>')
-    for y, items in by_year.items():
+    if in_press:
+        sections.append(f'<section id="in-press" class="card pub-group year-group"><h2>Accepted for publication (in press)</h2><ol class="pubs">{"".join(render_pub(p, p["number"]) for p in in_press)}</ol></section>')
+    for y, items in year_items.items():
         sections.append(f'<section id="year-{y}" class="card pub-group year-group"><h2>{y or "Undated"}</h2><ol class="pubs">{"".join(render_pub(p, p["number"]) for p in items)}</ol></section>')
     return f"""{head}
 <div class="pub-layout">
