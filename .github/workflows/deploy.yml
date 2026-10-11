@@ -27,17 +27,19 @@ jobs:
           python-version: "3.12"
       - name: Install python-docx (for the Word CV)
         run: pip install python-docx
+      - name: Give .ris files standard names (year-author-title.ris)
+        run: python scripts/rename_ris.py
       - name: Build site from pages/, data/ and publications/*.ris
         run: python scripts/build.py --cv-files
-      - name: Save updated CV files (cv/*.docx, cv/*.pdf) to the repository
+      - name: Save renamed .ris files and updated CV files to the repository
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add cv
+          git add -A publications cv
           if git diff --cached --quiet; then
-            echo "CV unchanged"
+            echo "Nothing to save"
           else
-            git commit -m "Update CV files [skip ci]"
+            git commit -m "Tidy .ris file names / update CV files [skip ci]"
             git push
           fi
       - uses: actions/configure-pages@v5

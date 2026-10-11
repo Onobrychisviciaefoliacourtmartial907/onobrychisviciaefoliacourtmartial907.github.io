@@ -38,7 +38,14 @@ python scripts/add_doi.py --preprint 10.1101/2024.05.13.593988
 git add publications && git commit -m "Add new paper" && git push
 ```
 
-A `.ris` file can contain one paper or many (e.g. a whole Zotero export).
+The file can have any name: after each commit, GitHub renames it to the standard
+`year-firstauthor-title-words.ris` (e.g. `2025-mannochio-russo-microbiome-diversifies-long-short-chain.ris`)
+and commits the rename. On your computer you can do the same with
+`python3 scripts/rename_ris.py` (add `--dry-run` to preview). Run `git pull`
+before editing locally, since GitHub may have renamed files.
+
+A `.ris` file can contain one paper or many (e.g. a whole Zotero export);
+files with several papers keep their name.
 If the same DOI appears twice, only the first copy is shown.
 
 ### Optional touches inside a .ris file
