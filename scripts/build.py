@@ -572,6 +572,14 @@ def build(compare_layouts=False, cv_files=False):
             write(f"publications-{name}.html", "Publications", publications_page(pubs, highlighted, name), "publications.html")
         print("  layout previews: publications-list.html, publications-timeline.html, publications-cards.html")
     (OUT / ".nojekyll").write_text("")
+    base = CONFIG.get("base_url", "").rstrip("/")
+    if base:  # sitemap + robots.txt so search engines find every page
+        urls = [f"{base}/" if p == "index.html" else f"{base}/{p}" for p in CONFIG["pages"]] + [f"{base}/cv.html"]
+        entries = "".join(f"  <url><loc>{u}</loc><lastmod>{today.isoformat()}</lastmod></url>\n" for u in urls)
+        (OUT / "sitemap.xml").write_text(
+            '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+            + entries + "</urlset>\n", encoding="utf-8")
+        (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {base}/sitemap.xml\n", encoding="utf-8")
     print(f"  wrote {len(CONFIG['pages'])} pages to {OUT.relative_to(ROOT)}/")
 
 
