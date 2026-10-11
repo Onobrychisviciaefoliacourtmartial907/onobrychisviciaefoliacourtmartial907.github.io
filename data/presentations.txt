@@ -3,11 +3,12 @@
 #
 # One block per presentation, blocks separated by an empty line. Fields:
 #   year:      required
-#   type:      oral, poster or invited (for "oral and poster" write: oral, poster)
+#   type:      oral, poster, invited or workshop (for "oral and poster" write: oral, poster)
 #   title:     required
 #   event:     conference or venue
 #   location:  city, state/country
 #   mode:      write "online" for virtual presentations (optional)
+#   audience:  estimated audience, e.g. "50 people" (optional, shown for workshops)
 # The same title at the same event/year is shown once on the website.
 # Order inside a year is kept as written here (newest year first is not required).
 
@@ -158,3 +159,63 @@ type: poster
 title: Thermoanalytical characteristics of Tetrapterys multiglandulosa young and old leaves' powder and methanolic extracts by TG-DSC
 event: VIII Simpósio de Análise Térmica
 location: Ponta Grossa, PR, Brazil
+
+# ---- Workshops given ----
+
+year: 2025
+type: workshop
+title: Learning about the diversity of lipids from billions of MS/MS files at once - insights from molecular networking, query language and global fast search engines
+event: Inserm Workshop 287 - Lipidomics: principles and applications in the field of health
+location: Bordeaux, France
+audience: 70 people
+
+year: 2025
+type: workshop
+title: GNPS 2.0/CMMCkb Enrichment for Microbial Natural Product Discovery
+event: International Conference on Natural Product Discovery and Development in the Genomic Era
+location: San Diego, CA, United States
+audience: 50 people
+
+year: 2024
+type: workshop
+title: Classical Molecular Networking in GNPS2
+mode: online
+audience: 200 people
+
+year: 2024
+type: workshop
+title: Public Data Re-use / Re-analysis with MetaboLights and GNPS
+event: 20th Annual International Conference of the Metabolomics Society
+location: Osaka, Japan
+audience: 50 people
+
+year: 2023
+type: workshop
+title: Network Enrichment Analysis and Deposition Workflow – Collaborative Microbial Metabolite Center
+mode: online
+audience: 70 people
+
+year: 2023
+type: workshop
+title: GNPS for Natural Product Discovery
+event: International Conference on Natural Product Discovery and Development in the Genomic Era
+location: San Diego, CA, United States
+audience: 50 people
+
+year: 2021
+type: workshop
+title: Molecular Networking with GC-MS data (in Portuguese)
+mode: online
+audience: 80 people
+
+year: 2020
+type: workshop
+title: Feature-Based Molecular Networking (in Portuguese)
+mode: online
+audience: 200 people
+
+year: 2020
+type: workshop
+title: Molecular Networking (in Portuguese)
+mode: online
+audience: 450 people

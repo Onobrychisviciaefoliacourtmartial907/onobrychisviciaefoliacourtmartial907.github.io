@@ -327,7 +327,7 @@ def selected_list(highlighted):
 
 # ---------------------------------------------------------------- presentations
 
-TALK_LABELS = {"oral": "Oral", "poster": "Poster", "invited": "Invited talk"}
+TALK_LABELS = {"oral": "Oral", "poster": "Poster", "invited": "Invited talk", "workshop": "Workshop"}
 
 
 def load_presentations():
@@ -354,19 +354,20 @@ def load_presentations():
         if fields.get("mode", "").lower() == "online":
             location = f"{location} (online)" if location else "Online"
         talks.append({"year": int(fields["year"]), "types": types, "title": fields["title"],
-                      "event": fields.get("event", ""), "location": location})
+                      "event": fields.get("event", ""), "location": location, "audience": fields.get("audience", "")})
     talks.sort(key=lambda t: t["year"], reverse=True)  # stable: keeps file order within a year
     return talks
 
 
 def presentations_page(talks):
     years = sorted({t["year"] for t in talks}, reverse=True)
-    out = ['<section class="page-head">\n  <p class="eyebrow">Talks &amp; posters</p>\n  <h1>Presentations</h1>\n</section>\n']
+    out = ['<section class="page-head">\n  <p class="eyebrow">Talks, posters &amp; workshops</p>\n  <h1>Presentations</h1>\n</section>\n']
     for y in years:
         merged = {}  # same title within a year -> one entry listing every event
         for t in (t for t in talks if t["year"] == y):
             entry = merged.setdefault(t["title"], {"events": [], "types": []})
-            entry["events"].append(", ".join(x for x in (t["event"], t["location"]) if x))
+            where = ", ".join(x for x in (t["event"], t["location"]) if x)
+            entry["events"].append(where + (f". Estimated audience: {t['audience']}" if t["audience"] else ""))
             entry["types"] += [x for x in t["types"] if x not in entry["types"]]
         items = "".join(
             f'<li><h3>{html.escape(title)}</h3>{"".join(f"<p>{html.escape(e)}.</p>" for e in e_["events"])}'
@@ -414,17 +415,20 @@ def cv_values(pubs, talks):
     def section(title, items):
         return f"<section><h2>{title}</h2>{pub_list(items)}</section>" if items else ""
 
+    def talk_rows(items):
+        rows = []
+        for t in items:
+            where = ", ".join(x for x in (t["event"], t["location"]) if x)
+            detail = where + (f". Estimated audience: {t['audience']}." if t["audience"] else "")
+            rows.append(f'<div class="item row"><div><h3>{html.escape(t["title"])}</h3>'
+                        f'<p>{html.escape(detail)}</p></div><span class="when">{t["year"]}</span></div>')
+        return "".join(rows)
+
     def talk_group(title, kind):
         items = [t for t in talks if kind in t["types"]]
         if not items:
             return ""
-        rows = "".join(
-            f'<div class="item row"><div><h3>{html.escape(t["title"])}</h3>'
-            f'<p>{html.escape(", ".join(x for x in (t["event"], t["location"]) if x))}</p></div>'
-            f'<span class="when">{t["year"]}</span></div>'
-            for t in items
-        )
-        return f'<h3 class="sub">{title}</h3><div class="cv-talks">{rows}</div>'
+        return f'<h3 class="sub">{title}</h3><div class="cv-talks">{talk_rows(items)}</div>'
 
     n_first = sum(is_first_or_cofirst(p) for p in published)
     return {
@@ -435,6 +439,7 @@ def cv_values(pubs, talks):
         "cv_invited": talk_group("Invited talks", "invited"),
         "cv_oral": talk_group("Oral presentations", "oral"),
         "cv_posters": talk_group("Poster presentations", "poster"),
+        "cv_workshops": f'<div class="cv-talks">{talk_rows([t for t in talks if "workshop" in t["types"]])}</div>',
         "cv_updated": dt.date.today().strftime("%B %d, %Y"),
     }
 
